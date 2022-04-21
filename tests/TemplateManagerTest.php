@@ -17,9 +17,9 @@ class TemplateManagerTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp(): void
     {
-        InstructorRepository::getInstance()->save(new Instructor(1, "jean", "rock"));
-        MeetingPointRepository::getInstance()->save(new MeetingPoint(1, "http://lambda.to", "paris 5eme"));
-        ApplicationContext::getInstance()->setCurrentUser(new Learner(1, "toto", "bob", "toto@bob.to"));
+        InstructorRepository::getInstance()->save(new Instructor(1, 'jean', 'rock'));
+        MeetingPointRepository::getInstance()->save(new MeetingPoint(1, 'http://lambda.to', 'paris 5eme'));
+        ApplicationContext::getInstance()->setCurrentUser(new Learner(1, 'toto', 'bob', 'toto@bob.to'));
 
     }
 
@@ -31,7 +31,7 @@ class TemplateManagerTest extends \PHPUnit_Framework_TestCase
         $expectedInstructor = InstructorRepository::getInstance()->getById(1);
         $expectedMeetingPoint = MeetingPointRepository::getInstance()->getById(1);
         $expectedUser = ApplicationContext::getInstance()->getCurrentUser();
-        $start_at = new \DateTime("2021-01-01 12:00:00");
+        $start_at = new \DateTime('2021-01-01 12:00:00');
         $end_at = $start_at->add(new \DateInterval('PT1H'));
 
         $lesson = new Lesson(1, 1 , 1, $start_at, $end_at);
@@ -40,7 +40,7 @@ class TemplateManagerTest extends \PHPUnit_Framework_TestCase
         $template = new Template(
             1,
             'Votre leçon de conduite avec [lesson:instructor_name]',
-            "
+            '
 Bonjour [user:first_name],
 
 La reservation du [lesson:start_date] de [lesson:start_time] à [lesson:end_time] avec [lesson:instructor_name] a bien été prise en compte!
@@ -48,27 +48,80 @@ Voici votre point de rendez-vous: [lesson:meeting_point].
 
 Bien cordialement,
 
-L'équipe Ornikar
-");
+L\'équipe Ornikar
+');
         $templateManager = new TemplateManager();
 
         $message = $templateManager->getTemplateComputed(
             $template,
             [
-                'lesson' => $lesson
+                'lesson' => $lesson,
             ]
         );
 
         $this->assertEquals('Votre leçon de conduite avec ' . $expectedInstructor->firstname, $message->subject);
-        $this->assertEquals("
+        $this->assertEquals('
 Bonjour Toto,
 
-La reservation du " . $start_at->format('d/m/Y') . " de " . $start_at->format('H:i') . " à " . $end_at->format('H:i') . " avec " . $expectedInstructor->firstname . " a bien été prise en compte!
-Voici votre point de rendez-vous: " . $expectedMeetingPoint->name . ".
+La reservation du '.$start_at->format('d/m/Y').' de '.$start_at->format('H:i').' à '.$end_at->format('H:i').' avec '.$expectedInstructor->firstname.' a bien été prise en compte!
+Voici votre point de rendez-vous: '.$expectedMeetingPoint->name.'.
 
 Bien cordialement,
 
-L'équipe Ornikar
-", $message->content);
+L\'équipe Ornikar
+', $message->content);
+    }
+
+    /**
+     * @test
+     */
+    public function testWithInstructorLink(): void
+    {
+        $expectedInstructor = InstructorRepository::getInstance()->getById(1);
+        $expectedMeetingPoint = MeetingPointRepository::getInstance()->getById(1);
+        $expectedUser = ApplicationContext::getInstance()->getCurrentUser();
+        $start_at = new \DateTime('2021-01-01 12:00:00');
+        $end_at = $start_at->add(new \DateInterval('PT1H'));
+
+        $lesson = new Lesson(1, 1 , 1, $start_at, $end_at);
+        LessonRepository::getInstance()->save($lesson);
+
+        $template = new Template(
+            1,
+            'Votre leçon de conduite avec [lesson:instructor_name]',
+            '
+Bonjour [user:first_name],
+
+La reservation du [lesson:start_date] de [lesson:start_time] à [lesson:end_time] avec [lesson:instructor_name] a bien été prise en compte!
+Voici votre point de rendez-vous: [lesson:meeting_point].
+
+Vous pouvez prendre contact avec votre instructeur en cliquant !(ici)[http://ornikar.env.fr/[lesson:instructor_link]].
+
+Bien cordialement,
+
+L\'équipe Ornikar
+');
+        $templateManager = new TemplateManager();
+
+        $message = $templateManager->getTemplateComputed(
+            $template,
+            [
+                'lesson' => $lesson,
+            ]
+        );
+
+        $this->assertEquals('Votre leçon de conduite avec ' . $expectedInstructor->firstname, $message->subject);
+        $this->assertEquals('
+Bonjour Toto,
+
+La reservation du '.$start_at->format('d/m/Y').' de '.$start_at->format('H:i').' à '.$end_at->format('H:i').' avec '.$expectedInstructor->firstname.' a bien été prise en compte!
+Voici votre point de rendez-vous: '.$expectedMeetingPoint->name.'.
+
+Vous pouvez prendre contact avec votre instructeur en cliquant !(ici)[http://ornikar.env.fr/instructors/1-jean].
+
+Bien cordialement,
+
+L\'équipe Ornikar
+', $message->content);
     }
 }
