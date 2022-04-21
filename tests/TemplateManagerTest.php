@@ -2,7 +2,6 @@
 
 namespace Test;
 
-
 use App\Context\ApplicationContext;
 use App\Entity\Instructor;
 use App\Entity\Learner;
@@ -16,10 +15,7 @@ use App\TemplateManager;
 
 class TemplateManagerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Init the mocks
-     */
-    public function setUp()
+    public function setUp(): void
     {
         InstructorRepository::getInstance()->save(new Instructor(1, "jean", "rock"));
         MeetingPointRepository::getInstance()->save(new MeetingPoint(1, "http://lambda.to", "paris 5eme"));
@@ -28,16 +24,9 @@ class TemplateManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Closes the mocks
-     */
-    public function tearDown()
-    {
-    }
-
-    /**
      * @test
      */
-    public function test()
+    public function test(): void
     {
         $expectedInstructor = InstructorRepository::getInstance()->getById(1);
         $expectedMeetingPoint = MeetingPointRepository::getInstance()->getById(1);
