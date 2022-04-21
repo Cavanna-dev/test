@@ -16,4 +16,9 @@ class Learner
         $this->lastname = $lastname;
         $this->email = $email;
     }
+
+    public function getFormattedIdentity(): string
+    {
+        return ucfirst(strtolower($this->firstname));
+    }
 }
