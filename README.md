@@ -43,3 +43,65 @@ What do we expect from you:
 - A makefile is provided for you to help you start directly with docker.
 
 **Good luck!**
+
+
+## Dev notes
+
+- How I work:<br>
+The time box is short, I usually take a lot of time to think about what result I need, then decompose all the way until I have the full path for my work.
+To complete a refactoring like this, I typically change little piece by piece while running test every time I feel I need to.
+<br><br>
+- I added some tests:<br>
+For me, the actual test wasn't enough to cover every condition of the code.
+Overmore, I detected that the code had some condition that is not in the test, but for me the code > test. So I based my judgement on "I'm actually working on a refactoring ticket and not a *BUG*, it means the code is working, so I have to add tests accordingly". For example, in the code you can add an instructor in the data, so I tested you can pass an instructor to the TemplateManager data.
+<br><br>
+- Frustrations about the instructor repository that cannot be changed, and I have a getById that returns mixed :(. <br>For me the get design **MUST** return the inherent type of the repository (InstructorRepository->getOneById() returns Instructor or throws RuntimeException)
+<br><br>
+- Why did I create a VO identity?<br>
+ValueObjects are clearly underestimated for me in the PHP community. I see a lot of stacks in my career and I think VO are a very simple et easy design to apply everywhere.
+<br><br>
+It solves a lot of design problems in my opinion, but 2 are important. 
+1/ Using primitives everywhere is the beginning of chaos. Like you start with a User class that contains only id, name and email, and one day it encapsulates too much logic and begin to be a SuperMassiveUserClass that knows how to deal with passwords, emails, roles, etc...
+2/ It improves readability to have a code with VO and delegate responsibilities (SOLID first rule)
+```
+class Order
+{
+  public const STATUS_STARTING = 'starting';
+  public const STATUS_PENDING = 'pending';
+  public const STATUS_DONE = 'done';
+  
+  private string $status;
+  
+  public function isStarting(): bool 
+  {
+    return self::STATUS_STARTING === $this->status;
+  }
+}
+```
+
+```
+class Order
+{
+  private OrderStatus $status;
+    
+  public function isStarting(): bool 
+  {
+    return $this->status->isStarting();
+  }
+}
+
+final class OrderStatus
+{
+  // private because we do not need to expose them since we have public method that encapsulates the logic for us
+  private const STATUS_STARTING = 'starting';
+  private const STATUS_PENDING = 'pending';
+  private const STATUS_DONE = 'done';
+  
+  private string $value;
+  
+  public function isStarting(): bool 
+  {
+    return self::STATUS_STARTING === $this->value;
+  }
+}
+```

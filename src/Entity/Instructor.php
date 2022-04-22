@@ -2,17 +2,16 @@
 
 namespace App\Entity;
 
+use App\Entity\ValueObject\Identity;
 
 class Instructor
 {
     public int $id;
-    public string $firstname;
-    public string $lastname;
+    public Identity $identity;
 
-    public function __construct(int $id, string $firstname, string $lastname)
+    public function __construct(int $id, Identity $identity)
     {
         $this->id = $id;
-        $this->firstname = $firstname;
-        $this->lastname = $lastname;
+        $this->identity = $identity;
     }
 }

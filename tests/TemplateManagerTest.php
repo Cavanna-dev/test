@@ -8,6 +8,7 @@ use App\Entity\Learner;
 use App\Entity\Lesson;
 use App\Entity\MeetingPoint;
 use App\Entity\Template;
+use App\Entity\ValueObject\Identity;
 use App\Repository\InstructorRepository;
 use App\Repository\LessonRepository;
 use App\Repository\MeetingPointRepository;
@@ -20,7 +21,7 @@ class TemplateManagerTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp(): void
     {
-        InstructorRepository::getInstance()->save(new Instructor(1, 'jean', 'rock'));
+        InstructorRepository::getInstance()->save(new Instructor(1, new Identity('jean', 'rock')));
         MeetingPointRepository::getInstance()->save(new MeetingPoint(1, 'http://lambda.to', 'paris 5eme'));
         ApplicationContext::getInstance()->setCurrentUser(new Learner(1, 'toto', 'bob', 'toto@bob.to'));
     }
@@ -58,11 +59,11 @@ L\'équipe Ornikar
             ]
         );
 
-        $this->assertEquals('Votre leçon de conduite avec ' . $expectedInstructor->firstname, $message->subject);
+        $this->assertEquals('Votre leçon de conduite avec ' . $expectedInstructor->identity->firstName, $message->subject);
         $this->assertEquals('
 Bonjour '.$expectedUser->getFormattedIdentity().',
 
-La reservation du '.$startAt->format('d/m/Y').' de '.$startAt->format('H:i').' à '.$endAt->format('H:i').' avec '.$expectedInstructor->firstname.' a bien été prise en compte!
+La reservation du '.$startAt->format('d/m/Y').' de '.$startAt->format('H:i').' à '.$endAt->format('H:i').' avec '.$expectedInstructor->identity->firstName.' a bien été prise en compte!
 Voici votre point de rendez-vous: '.$expectedMeetingPoint->name.'.
 
 Bien cordialement,
@@ -106,14 +107,14 @@ L\'équipe Ornikar
             ]
         );
 
-        $this->assertEquals('Votre leçon de conduite avec '.$expectedInstructor->firstname, $message->subject);
+        $this->assertEquals('Votre leçon de conduite avec '.$expectedInstructor->identity->firstName, $message->subject);
         $this->assertEquals('
 Bonjour '.$expectedUser->getFormattedIdentity().',
 
-La reservation du '.$startAt->format('d/m/Y').' de '.$startAt->format('H:i').' à '.$endAt->format('H:i').' avec '.$expectedInstructor->firstname.' a bien été prise en compte!
+La reservation du '.$startAt->format('d/m/Y').' de '.$startAt->format('H:i').' à '.$endAt->format('H:i').' avec '.$expectedInstructor->identity->firstName.' a bien été prise en compte!
 Voici votre point de rendez-vous: '.$expectedMeetingPoint->name.'.
 
-Vous pouvez prendre contact avec votre instructeur en cliquant !(ici)[http://ornikar.env.fr/instructors/'.$expectedInstructor->id.'-'.$expectedInstructor->firstname.'].
+Vous pouvez prendre contact avec votre instructeur en cliquant !(ici)[http://ornikar.env.fr/instructors/'.$expectedInstructor->id.'-'.$expectedInstructor->identity->firstName.'].
 
 Bien cordialement,
 
@@ -157,14 +158,14 @@ L\'équipe Ornikar
             ]
         );
 
-        $this->assertEquals('Votre leçon de conduite avec '.$expectedInstructor->firstname, $message->subject);
+        $this->assertEquals('Votre leçon de conduite avec '.$expectedInstructor->identity->firstName, $message->subject);
         $this->assertEquals('
 Bonjour '.$learner->getFormattedIdentity().',
 
-La reservation du '.$startAt->format('d/m/Y').' de '.$startAt->format('H:i').' à '.$endAt->format('H:i').' avec '.$expectedInstructor->firstname.' a bien été prise en compte!
+La reservation du '.$startAt->format('d/m/Y').' de '.$startAt->format('H:i').' à '.$endAt->format('H:i').' avec '.$expectedInstructor->identity->firstName.' a bien été prise en compte!
 Voici votre point de rendez-vous: '.$expectedMeetingPoint->name.'.
 
-Vous pouvez prendre contact avec votre instructeur en cliquant !(ici)[http://ornikar.env.fr/instructors/'.$expectedInstructor->id.'-'.$expectedInstructor->firstname.'].
+Vous pouvez prendre contact avec votre instructeur en cliquant !(ici)[http://ornikar.env.fr/instructors/'.$expectedInstructor->id.'-'.$expectedInstructor->identity->firstName.'].
 
 Bien cordialement,
 
