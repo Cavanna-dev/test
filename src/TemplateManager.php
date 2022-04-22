@@ -8,6 +8,7 @@ use App\Entity\Learner;
 use App\Entity\Lesson;
 use App\Entity\MeetingPoint;
 use App\Entity\Template;
+use App\Helper\StringHelper;
 use App\Repository\InstructorRepository;
 use App\Repository\LessonRepository;
 use App\Repository\MeetingPointRepository;
@@ -59,7 +60,7 @@ class TemplateManager
 
         $user = (isset($data['user']) and ($data['user'] instanceof Learner)) ? $data['user'] : ApplicationContext::getInstance()->getCurrentUser();
         if (strpos($text, '[user:first_name]') !== false) {
-            $text = str_replace('[user:first_name]', $user->getFormattedIdentity(), $text);
+            $text = str_replace('[user:first_name]', StringHelper::capitalize($user->identity->firstName), $text);
         }
 
         return $text;

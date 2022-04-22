@@ -51,6 +51,8 @@ What do we expect from you:
 The time box is short, I usually take a lot of time to think about what result I need, then decompose all the way until I have the full path for my work.
 To complete a refactoring like this, I typically change little piece by piece while running test every time I feel I need to.
 <br><br>
+- I removed every double quotes from the code because I think you should only use single quote most of the time, and use double quotes when you need to inject vars in a string (but it's error-prone in my opinion).
+<br><br>
 - I added some tests:<br>
 For me, the actual test wasn't enough to cover every condition of the code.
 Overmore, I detected that the code had some condition that is not in the test, but for me the code > test. So I based my judgement on "I'm actually working on a refactoring ticket and not a *BUG*, it means the code is working, so I have to add tests accordingly". For example, in the code you can add an instructor in the data, so I tested you can pass an instructor to the TemplateManager data.

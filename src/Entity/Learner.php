@@ -2,23 +2,18 @@
 
 namespace App\Entity;
 
+use App\Entity\ValueObject\Identity;
+
 class Learner
 {
     public int $id;
-    public string $firstname;
-    public string $lastname;
+    public Identity $identity;
     public string $email;
 
-    public function __construct(int $id, string $firstname, string $lastname, string $email)
+    public function __construct(int $id, Identity $identity, string $email)
     {
         $this->id = $id;
-        $this->firstname = $firstname;
-        $this->lastname = $lastname;
+        $this->identity = $identity;
         $this->email = $email;
-    }
-
-    public function getFormattedIdentity(): string
-    {
-        return ucfirst(strtolower($this->firstname));
     }
 }

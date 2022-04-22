@@ -9,6 +9,7 @@ use App\Entity\Lesson;
 use App\Entity\MeetingPoint;
 use App\Entity\Template;
 use App\Entity\ValueObject\Identity;
+use App\Helper\StringHelper;
 use App\Repository\InstructorRepository;
 use App\Repository\LessonRepository;
 use App\Repository\MeetingPointRepository;
@@ -23,7 +24,7 @@ class TemplateManagerTest extends \PHPUnit_Framework_TestCase
     {
         InstructorRepository::getInstance()->save(new Instructor(1, new Identity('jean', 'rock')));
         MeetingPointRepository::getInstance()->save(new MeetingPoint(1, 'http://lambda.to', 'paris 5eme'));
-        ApplicationContext::getInstance()->setCurrentUser(new Learner(1, 'toto', 'bob', 'toto@bob.to'));
+        ApplicationContext::getInstance()->setCurrentUser(new Learner(1, new Identity('toto', 'bob'), 'toto@bob.to'));
     }
 
     public function test(): void
@@ -61,7 +62,7 @@ L\'équipe Ornikar
 
         $this->assertEquals('Votre leçon de conduite avec ' . $expectedInstructor->identity->firstName, $message->subject);
         $this->assertEquals('
-Bonjour '.$expectedUser->getFormattedIdentity().',
+Bonjour '.StringHelper::capitalize($expectedUser->identity->firstName).',
 
 La reservation du '.$startAt->format('d/m/Y').' de '.$startAt->format('H:i').' à '.$endAt->format('H:i').' avec '.$expectedInstructor->identity->firstName.' a bien été prise en compte!
 Voici votre point de rendez-vous: '.$expectedMeetingPoint->name.'.
@@ -109,7 +110,7 @@ L\'équipe Ornikar
 
         $this->assertEquals('Votre leçon de conduite avec '.$expectedInstructor->identity->firstName, $message->subject);
         $this->assertEquals('
-Bonjour '.$expectedUser->getFormattedIdentity().',
+Bonjour '.StringHelper::capitalize($expectedUser->identity->firstName).',
 
 La reservation du '.$startAt->format('d/m/Y').' de '.$startAt->format('H:i').' à '.$endAt->format('H:i').' avec '.$expectedInstructor->identity->firstName.' a bien été prise en compte!
 Voici votre point de rendez-vous: '.$expectedMeetingPoint->name.'.
@@ -131,7 +132,7 @@ L\'équipe Ornikar
 
         $lesson = new Lesson(1, 1 , 1, $startAt, $endAt);
         LessonRepository::getInstance()->save($lesson);
-        $learner = new Learner(2, 'horny', 'car', 'hornycar@ornikar.fr');
+        $learner = new Learner(2, new Identity('horny', 'car'), 'hornycar@ornikar.fr');
 
         $template = new Template(
             1,
@@ -160,7 +161,7 @@ L\'équipe Ornikar
 
         $this->assertEquals('Votre leçon de conduite avec '.$expectedInstructor->identity->firstName, $message->subject);
         $this->assertEquals('
-Bonjour '.$learner->getFormattedIdentity().',
+Bonjour '.StringHelper::capitalize($learner->identity->firstName).',
 
 La reservation du '.$startAt->format('d/m/Y').' de '.$startAt->format('H:i').' à '.$endAt->format('H:i').' avec '.$expectedInstructor->identity->firstName.' a bien été prise en compte!
 Voici votre point de rendez-vous: '.$expectedMeetingPoint->name.'.
