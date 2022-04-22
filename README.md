@@ -107,3 +107,5 @@ final class OrderStatus
   }
 }
 ```
+
+A wrote a lot so thank you if you reached this point. I appreciate your effort. (I'm an interviewer myself for my current job, I know it can be redundant).
